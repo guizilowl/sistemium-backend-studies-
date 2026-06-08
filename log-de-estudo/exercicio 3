@@ -1,0 +1,81 @@
+import re
+import json
+import os
+# =========================================
+# Núcleo de Aplicação (Regras e Dados)
+# =========================================
+class Agenda:
+    def __init__(self, nome_arquivo="contatos.json"):
+        self.arquivo = nome_arquivo
+        self._contatos = self._carregar()
+
+    def _carregar(self) -> dict:
+        if os.path.exists(self.arquivo):
+            with open(self.arquivo, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return{}
+        
+    def _salvar(self) -> None:
+        with open(self.arquivo, "w", encoding="utf-8") as f:
+            json.dump(self._contatos, f, indent=4)
+
+    def adicionar(self, nome: str, telefone: str) -> None:
+        nome_limpo = nome.strip()
+        telefone_limpo = re.sub(r'\D', '', telefone)
+
+        if not nome_limpo:
+            raise ValueError("O nomme não pode estar vazio.")
+        if not re.match(r'^\d{8,11}$', telefone_limpo):
+            raise ValueError("telefone deve conter de 8 a 11 números.")
+        
+        self._contatos[nome_limpo] = telefone_limpo
+        self._salvar()
+    
+    def buscar(self, nome: str) -> str:
+        nome_limpo = nome.strip()
+
+        if nome_limpo not in self._contatos:
+            raise KeyError(f"Contato  '{nome_limpo}' inexistente.")
+        
+        return self._contatos[nome_limpo]
+    
+#  ===========================================
+#   Interface de interação com o Usuário
+#  ===========================================
+def executar_sistema():
+    agenda = Agenda()
+
+    while True:
+        print("\n --- AGENDA ---")
+        print("1. Cadastrar novo contato")
+        print("2. Buscar contato existente")
+        print("3. Sair")
+
+        opcao = input("Digite o número da opção que deseja: ").strip()
+        if opcao == "1":
+            nome = input("nome: ")
+            telefone = input("telefone (apenas números): ")
+            try:
+                agenda.adicionar(nome, telefone)
+                print("-> Sucesso: Contato salvo permanente. ")
+            except ValueError as erro:
+                print(f" => Falha na validação: {erro}")
+        elif opcao == "2":
+            nome = input("digite o nome para buscar: ")
+            try:
+                telefone = agenda.buscar(nome)
+                print(f"-> Resultado: {nome} -> {telefone}")
+            except KeyError as erro:
+                print(f" -> Falha na busca: {erro}")
+
+        elif opcao == "3":
+            print("Sistema encerrado. Os dados estao salvos no arquivo 'contatos.json'. ")
+            break
+        else:
+            print("-> Erro: Opção inválida. Escolha 1, 2 ou 3.")
+
+# ==================================
+# Gatilho de Execução
+# ==================================
+if __name__ == '__main__':
+    executar_sistema()

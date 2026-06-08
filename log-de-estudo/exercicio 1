@@ -1,1 +1,13 @@
+#le 5 vetores e os msotrajunto da soma e multiplicação
+numbers = []
+for i in range(5):
+    n = int(input(f"write the {i+1}º number: " ))
+    numbers.append(n)
 
+soma = sum(numbers)
+multi = 1
+for n in numbers:
+    multi *= n
+print(f"\n numbers written: {', '. join(map(str, numbers))}")
+print(f"\n sum of numbers is equal to {soma}")
+print(f"\n the multiplication of numbers is {multi}")

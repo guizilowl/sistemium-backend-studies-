@@ -1,0 +1,17 @@
+import sys
+def processar_nota():
+    print("\n--- Validador de Notas Escolares ---")
+    entrada = input("digite a nota do aluno (0 a 10): ").strip()
+
+    try:
+        nota = float(entrada)
+        if nota < 0 or nota > 10:
+            raise ValueError("a nota deve estar estritamente entre 0 e 10. ")
+    except ValueError as erro:
+        print(f"Erro de Validação: {erro}")
+    except NameError:
+        pass
+    else:
+        print(f"Sucesso! A nota {nota} é válida e foi registrada.")
+if __name__ == "__main__":
+     processar_nota()

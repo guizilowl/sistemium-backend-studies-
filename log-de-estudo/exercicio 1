@@ -1,4 +1,4 @@
-#le 5 vetores e os msotrajunto da soma e multiplicação
+#le 5 vetores e os mostra junto da soma e multiplicação
 numbers = []
 for i in range(5):
     n = int(input(f"write the {i+1}º number: " ))

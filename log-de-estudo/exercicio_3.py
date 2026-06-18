@@ -24,6 +24,15 @@ class Agenda:
         telefone_limpo = re.sub(r'\D', '', telefone)
 
         if not nome_limpo:
+            raise ValueError("O nome não pode estar vazio.")
+        if nome_limpo in self._contatos:
+            raise ValueError("Este nome de contato já está cadastrado.")
+        if not re.match(r'^\d{8,11}$', telefone_limpo):
+            raise ValueError("O telefone deve conter de 8 a 11 números.")
+
+        self._contatos[nome_limpo] = telefone_limpo
+        self._salvar()
+        if not nome_limpo:
             raise ValueError("O nomme não pode estar vazio.")
         if not re.match(r'^\d{8,11}$', telefone_limpo):
             raise ValueError("telefone deve conter de 8 a 11 números.")

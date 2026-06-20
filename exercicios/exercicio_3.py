@@ -1,6 +1,7 @@
 import re
 import json
 import os
+
 # =========================================
 # Núcleo de Aplicação (Regras e Dados)
 # =========================================
@@ -13,8 +14,8 @@ class Agenda:
         if os.path.exists(self.arquivo):
             with open(self.arquivo, "r", encoding="utf-8") as f:
                 return json.load(f)
-        return{}
-        
+        return {}
+
     def _salvar(self) -> None:
         with open(self.arquivo, "w", encoding="utf-8") as f:
             json.dump(self._contatos, f, indent=4)
@@ -24,21 +25,25 @@ class Agenda:
         telefone_limpo = re.sub(r'\D', '', telefone)
 
         if not nome_limpo:
-            raise ValueError("O nomme não pode estar vazio.")
+            raise ValueError("O nome não pode estar vazio.")
+        if nome_limpo in self._contatos:
+            raise ValueError("Este nome de contato já está cadastrado.")
         if not re.match(r'^\d{8,11}$', telefone_limpo):
-            raise ValueError("telefone deve conter de 8 a 11 números.")
-        
+            raise ValueError("O telefone deve conter de 8 a 11 números.")
+        if telefone_limpo in self._contatos.values():
+            raise ValueError("Este número de telefone já está cadastrado.")
+
         self._contatos[nome_limpo] = telefone_limpo
         self._salvar()
-    
+
     def buscar(self, nome: str) -> str:
         nome_limpo = nome.strip()
 
         if nome_limpo not in self._contatos:
-            raise KeyError(f"Contato  '{nome_limpo}' inexistente.")
-        
+            raise KeyError(f"Contato '{nome_limpo}' inexistente.")
+
         return self._contatos[nome_limpo]
-    
+
 #  ===========================================
 #   Interface de interação com o Usuário
 #  ===========================================
@@ -57,7 +62,7 @@ def executar_sistema():
             telefone = input("telefone (apenas números): ")
             try:
                 agenda.adicionar(nome, telefone)
-                print("-> Sucesso: Contato salvo permanente. ")
+                print("-> Sucesso: Contato salvo permanentemente.")
             except ValueError as erro:
                 print(f" => Falha na validação: {erro}")
         elif opcao == "2":
@@ -69,7 +74,7 @@ def executar_sistema():
                 print(f" -> Falha na busca: {erro}")
 
         elif opcao == "3":
-            print("Sistema encerrado. Os dados estao salvos no arquivo 'contatos.json'. ")
+            print("Sistema encerrado. Os dados estão salvos no arquivo 'contatos.json'.")
             break
         else:
             print("-> Erro: Opção inválida. Escolha 1, 2 ou 3.")
